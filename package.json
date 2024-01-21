@@ -1,6 +1,6 @@
 {
-  "name": "native2ascii",
-  "displayName": "native2ascii",
+  "name": "properties-editor",
+  "displayName": "properties-editor",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -12,21 +12,16 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "native2ascii.helloWorld",
-        "title": "Hello World"
-      }
-    ],
     "customEditors": [
       {
-        "viewType": "native2ascii.editor",
+        "viewType": "properties.editor",
         "displayName": "Properties Editor",
         "selector": [
           {
             "filenamePattern": "*.properties"
           }
-        ]
+        ],
+        "priority": "default"
       }
     ]
   },
@@ -37,7 +32,7 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
-    "format": "@biomejs/biome format --write ./src"
+    "format": "npx @biomejs/biome format --write ./src"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.2",

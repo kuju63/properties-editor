@@ -3,7 +3,9 @@
     height: 100%;
     background-color: unset;
     border: none;
+    padding: 0;
 }
+
 #txta-properties:focus {
     outline: none;
 }
@@ -30,5 +32,6 @@ main {
 
 .scrollable-wrapper {
     height: 100%;
-    overflow: auto;
+    overflow: scroll;
+    padding-left: .5rem;
 }

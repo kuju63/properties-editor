@@ -1,4 +1,4 @@
-# native2ascii README
+# Properties Editor
 
 This is the README for your extension "native2ascii". After writing up a brief description, we recommend including the following sections.
 
