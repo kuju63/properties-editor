@@ -17,6 +17,17 @@
         "command": "native2ascii.helloWorld",
         "title": "Hello World"
       }
+    ],
+    "customEditors": [
+      {
+        "viewType": "native2ascii.editor",
+        "displayName": "Properties Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.properties"
+          }
+        ]
+      }
     ]
   },
   "scripts": {
