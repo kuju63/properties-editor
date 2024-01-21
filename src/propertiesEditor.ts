@@ -12,15 +12,15 @@ export class PropertiesEditorProvider
     return providerRegistration;
   }
 
-  private static readonly viewType = "propertiesEditor.propertiesEditor";
+  private static readonly viewType = "native2ascii.editor";
 
   constructor(private readonly context: vscode.ExtensionContext) {}
 
-  resolveCustomTextEditor(
+  public async resolveCustomTextEditor(
     document: vscode.TextDocument,
     webviewPanel: vscode.WebviewPanel,
-    token: vscode.CancellationToken
-  ): void | Thenable<void> {
+    _token: vscode.CancellationToken
+  ): Promise<void> {
     console.log("call resolveCustomTextEditor");
     webviewPanel.webview.options = {
       enableScripts: true,
@@ -48,7 +48,12 @@ export class PropertiesEditorProvider
     });
 
     webviewPanel.webview.onDidReceiveMessage((e) => {
-      console.log("receive message");
+      console.log("receive message", e);
+      switch (e.command) {
+        case "save":
+          console.log("save");
+          return;
+      }
     });
 
     updateWebView();
@@ -58,6 +63,8 @@ export class PropertiesEditorProvider
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this.context.extensionUri, "media", "editor.js")
     );
+    const vscodeStylesUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, "media", "vscode.css"));
+    const extensionStylesUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, "media", "style.css"));
     const nonce = this.getNonce();
 
     return `
@@ -65,12 +72,21 @@ export class PropertiesEditorProvider
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}'">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Sample</title>
+      <link href="${vscodeStylesUri}" rel="stylesheet">
+      <link href="${extensionStylesUri}" rel="stylesheet">
     </head>
     <body>
-      <input type="text"/>
+      <header>
+        <button id="btn-save">Save</button>
+      </header>
+      <main>
+        <div class="scrollable-wrapper">
+          <textarea id="txta-properties"></textarea>
+        </div>
+      </main>
       <script nonce="${nonce}" src="${scriptUri}"></script>
     </body>
     </html>`;
