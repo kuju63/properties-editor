@@ -13,6 +13,12 @@
     "type": "git",
     "url": "https://github.com/kuju63/properties-editor"
   },
+  "preview": true,
+  "keywords": [
+    "properties",
+    "editor",
+    "extension"
+  ],
   "publisher": "kuju63",
   "activationEvents": [],
   "main": "./out/extension.js",
