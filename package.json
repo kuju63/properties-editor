@@ -13,6 +13,12 @@
     "type": "git",
     "url": "https://github.com/kuju63/properties-editor"
   },
+  "preview": true,
+  "keywords": [
+    "properties",
+    "editor",
+    "extension"
+  ],
   "publisher": "kuju63",
   "activationEvents": [],
   "main": "./out/extension.js",
@@ -39,7 +45,7 @@
     "test": "vscode-test",
     "format": "npx @biomejs/biome format --write ./src",
     "package": "vsce package",
-    "deploy": "vsce publish minor"
+    "deploy": "vsce publish"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
