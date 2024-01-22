@@ -1,6 +1,6 @@
 {
   "name": "properties-editor",
-  "displayName": "properties-editor",
+  "displayName": "Properties Editor",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -9,6 +9,11 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kuju63/properties-editor"
+  },
+  "publisher": "kuju63",
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -32,7 +37,9 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
-    "format": "npx @biomejs/biome format --write ./src"
+    "format": "npx @biomejs/biome format --write ./src",
+    "package": "vsce package",
+    "deploy": "vsce publish"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.2",
@@ -43,6 +50,7 @@
     "@typescript-eslint/parser": "^6.15.0",
     "@vscode/test-cli": "^0.0.4",
     "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^2.22.0",
     "eslint": "^8.56.0",
     "typescript": "^5.3.3"
   }
