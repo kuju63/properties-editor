@@ -45,7 +45,7 @@
     "test": "vscode-test",
     "format": "npx @biomejs/biome format --write ./src",
     "package": "vsce package",
-    "deploy": "vsce publish minor"
+    "deploy": "vsce publish"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
