@@ -34,6 +34,18 @@ export class PropertiesEditorProvider
 			});
 		}
 
+    const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
+      if (e.document.uri.toString() === document.uri.toString()) {
+        updateWebView();
+      } else if (e.reason === vscode.TextDocumentChangeReason.Undo) {
+        updateWebView();
+      }
+    });
+
+    webviewPanel.onDidDispose(() => {
+      changeDocumentSubscription.dispose();
+    });
+
 		function applyChanges(changes: string) {
 			console.log("source text", changes);
 			const asciiText = escapeAscii(changes);
@@ -60,6 +72,10 @@ export class PropertiesEditorProvider
 					applyChanges(e.text);
 					document.save();
 					return;
+        case "dirty-change":
+          console.log("dirty-change", e.text);
+          applyChanges(e.text);
+          return;
 			}
 		});
 

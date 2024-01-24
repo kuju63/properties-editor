@@ -20,4 +20,12 @@
         break;
     }
   });
+
+  // Handle user input event in the textarea for send message to extension.
+  editor.addEventListener('input', (e) => {
+    vscode.postMessage({
+      command: 'dirty-change',
+      text: editor.value
+    });
+  });
 })();
