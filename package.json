@@ -2,7 +2,7 @@
   "name": "properties-editor",
   "displayName": "Properties Editor",
   "description": "",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -19,6 +19,7 @@
     "editor",
     "extension"
   ],
+  "icon": "images/icon.png",
   "publisher": "kuju63",
   "activationEvents": [],
   "main": "./out/extension.js",
