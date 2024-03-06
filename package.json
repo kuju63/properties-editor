@@ -21,7 +21,9 @@
   ],
   "icon": "images/icon.png",
   "publisher": "kuju63",
-  "activationEvents": [],
+  "activationEvents": [
+    "onCustomEditor:viewType:properties.editor"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "customEditors": [
