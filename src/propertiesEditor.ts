@@ -106,9 +106,6 @@ export class PropertiesEditorProvider
       <link href="${extensionStylesUri}" rel="stylesheet">
     </head>
     <body>
-      <header>
-        <button id="btn-save">Save</button>
-      </header>
       <main>
         <div class="scrollable-wrapper">
           <textarea id="txta-properties"></textarea>

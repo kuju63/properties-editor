@@ -6,13 +6,6 @@
   const previousState = vscode.getState();
   editor.value = previousState ? previousState.text : '';
 
-  document.querySelector('#btn-save').addEventListener('click', (e) => {
-    vscode.postMessage({
-      command: 'save',
-      text: editor.value
-    });
-  });
-
   window.addEventListener('message', event => {
     const message = event.data;
     switch (message.command) {
