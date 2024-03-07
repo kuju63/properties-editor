@@ -3,13 +3,6 @@
 
   const editor = /** @type {HTMLTextAreaElement} */ (document.querySelector("#txta-properties"));
 
-  document.querySelector('#btn-save').addEventListener('click', (e) => {
-    vscode.postMessage({
-      command: 'save',
-      text: editor.value
-    });
-  });
-
   window.addEventListener('message', event => {
     const message = event.data;
     switch (message.command) {
