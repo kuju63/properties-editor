@@ -3,6 +3,9 @@
 
   const editor = /** @type {HTMLTextAreaElement} */ (document.querySelector("#txta-properties"));
 
+  const previousState = vscode.getState();
+  editor.value = previousState ? previousState.text : '';
+
   document.querySelector('#btn-save').addEventListener('click', (e) => {
     vscode.postMessage({
       command: 'save',
@@ -17,6 +20,7 @@
         const text = message.text;
         console.log(text);
         editor.value = text;
+        vscode.setState({ text });
         break;
     }
   });
