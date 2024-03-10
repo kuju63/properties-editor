@@ -41,4 +41,4 @@ jobs:
       - name: Run tests
         run: xvfb-run -a npm test
       - name: Pack
-        run: npm package
+        run: npm run package
