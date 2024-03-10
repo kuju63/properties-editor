@@ -4,6 +4,10 @@
 
 - Added the feature to switch native characters and ascii characters on editor.
 
+## [0.1.2] - 2024-03-08
+
+- Fix release pipeline error only.
+
 ## [0.1.0] - 2024-03-08
 
 - Fix the bug that editor content is not shown when the editor is reopened.
