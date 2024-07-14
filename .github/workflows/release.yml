@@ -1,9 +1,25 @@
 on:
-  release:
-    types:
-      - published
+  pull_request:
+    branches:
+      - main
 
 jobs:
+  test:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - run: npm ci
+      - run: npm run compile
+      - run: xvfb-run -a npm test
+        if: matrix.os == 'ubuntu-latest'
+      - run: npm test
+        if: matrix.os != 'ubuntu-latest'
   publish:
     runs-on: ubuntu-latest
     steps:
@@ -12,9 +28,31 @@ jobs:
         with:
           node-version: 18.x
       - run: npm ci
-      - run: npm run compile
-      - run: xvfb-run -a npm run test
-      - run: npm run deploy
-        if: success() && startsWith(github.ref, 'refs/tags/')
+      - name: Get Next Version
+        id: semver
+        if: success()
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          branch: ${{ github.head_ref }}
+          patchList: fix,bugfix,perf,refactor,test,tests,bump,chore,doc,docs,ci
+      - name: Set Version
+        if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
+        run: npm pkg set version=${{ steps.semver.outputs.nextStrict }}
+      - name: Package
+        if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
+        run: npm run package
+      - name: Publish
+        if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
+        run: npm run deploy -- -i properties-editor-${{ steps.semver.outputs.nextStrict }}.vsix
         env:
-          VSCE_PAT: ${{ secrets.VSC_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSC_TOKEN  }}
+      - name: Create Release
+        if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: properties-editor-${{ steps.semver.outputs.nextStrict }}.vsix
+          tag_name: ${{ steps.semver.outputs.next }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
