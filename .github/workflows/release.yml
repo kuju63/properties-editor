@@ -36,6 +36,7 @@ jobs:
         with:
           token: ${{ github.token }}
           branch: main
+          maxTagsToFetch: 50
           patchList: fix,bugfix,perf,refactor,test,tests,bump,chore,doc,docs,ci
       - name: Set Version
         if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
