@@ -41,6 +41,7 @@ jobs:
           branch: main
           maxTagsToFetch: 50
           patchList: fix,bugfix,perf,refactor,test,tests
+          noVersionBumpBehavior: silent
       - name: Set Version
         if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
         run: npm pkg set version=${{ steps.semver.outputs.nextStrict }}
