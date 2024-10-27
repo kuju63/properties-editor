@@ -2,6 +2,13 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      maxTagsToFetch:
+        description: 'Maximum number of tags to fetch from latest.'
+        required: true
+        type: number
+        default: 50
 
 jobs:
   test:
@@ -20,9 +27,54 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
       - run: npm test
         if: matrix.os != 'ubuntu-latest'
+
+  # The following jobs are used to bump the version of the extension.
+  bump-auto:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    outputs:
+      nextVersion: ${{ steps.semver.outputs.nextStrict }}
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Next Version
+        id: semver
+        if: success()
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          branch: main
+          maxTagsToFetch: 50
+          patchList: fix,bugfix,perf,refactor,test,tests
+          noVersionBumpBehavior: silent
+
+  # This job is used to bump the version of the extension manually.
+  bump-manual:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    outputs:
+      nextVersion: ${{ steps.semver.outputs.nextStrict }}
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Next Version
+        id: semver
+        if: success()
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          branch: main
+          maxTagsToFetch: ${{ github.event.inputs.maxTagsToFetch }}
+          patchList: fix,bugfix,perf,refactor,test,tests
+          noVersionBumpBehavior: silent
+
   publish:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [bump-auto, bump-manual]
     permissions:
       contents: write
       packages: write
@@ -34,30 +86,28 @@ jobs:
       - run: npm ci
       - name: Get Next Version
         id: semver
-        if: success()
-        uses: ietf-tools/semver-action@v1
-        with:
-          token: ${{ github.token }}
-          branch: main
-          maxTagsToFetch: 50
-          patchList: fix,bugfix,perf,refactor,test,tests
-          noVersionBumpBehavior: silent
+        run: |
+          if [ -z "${{ needs.bump-auto.outputs.nextVersion }}" ]; then
+            echo "nextVersion=${{ needs.bump-manual.outputs.nextVersion }}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "nextVersion=${{ needs.bump-auto.outputs.nextVersion }}" >> "${GITHUB_OUTPUT}"
+          fi
       - name: Set Version
-        if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
-        run: npm pkg set version=${{ steps.semver.outputs.nextStrict }}
+        if: ${{ success() && steps.semver.outputs.nextVersion != '' }}
+        run: npm pkg set version=${{ steps.semver.outputs.nextVersion }}
       - name: Package
-        if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
+        if: ${{ success() && steps.semver.outputs.nextVersion != '' }}
         run: npm run package
       - name: Publish
-        if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
-        run: npm run deploy -- -i properties-editor-${{ steps.semver.outputs.nextStrict }}.vsix
+        if: ${{ success() && steps.semver.outputs.nextVersion != '' }}
+        run: npm run deploy -- -i properties-editor-${{ steps.semver.outputs.nextVersion }}.vsix
         env:
           VSCE_PAT: ${{ secrets.VSC_TOKEN  }}
       - name: Create Release
-        if: ${{ success() && steps.semver.outputs.nextStrict != '' }}
+        if: ${{ success() && steps.semver.outputs.nextVersion != '' }}
         uses: softprops/action-gh-release@v2
         with:
-          files: properties-editor-${{ steps.semver.outputs.nextStrict }}.vsix
+          files: properties-editor-${{ steps.semver.outputs.nextVersion }}.vsix
           tag_name: ${{ steps.semver.outputs.next }}
           draft: false
           prerelease: false
