@@ -51,7 +51,7 @@
     "deploy": "vsce publish"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.0.6",
     "@types/mocha": "^10.0.6",
     "@types/node": "22.x",
     "@types/vscode": "^1.85.0",
