@@ -107,7 +107,7 @@ jobs:
           VSCE_PAT: ${{ secrets.VSC_TOKEN  }}
       - name: Create Release
         if: ${{ success() && steps.semver.outputs.nextVersion != '' }}
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: properties-editor-${{ steps.semver.outputs.nextVersion }}.vsix
           tag_name: ${{ steps.semver.outputs.next }}
